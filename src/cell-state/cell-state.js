@@ -1,4 +1,3 @@
-///////// GENERAL SETUP
 const canvas = document.getElementById("cell-state");
 if (!navigator.gpu) {
     throw new Error("WebGPU not supported on this browser.");
@@ -15,8 +14,6 @@ context.configure({
     device: device,
     format: canvasFormat,
 });
-///////// GENERAL SETUP
-
 
 ///////// WGSL
 const cellShaderModule = device.createShaderModule({
@@ -61,7 +58,6 @@ const cellShaderModule = device.createShaderModule({
 ///////// WGSL
 
 
-///////// INNER SQUARE SETUP
 const vertices = new Float32Array([
     -0.8, -0.8,
     0.8, -0.8,
@@ -104,21 +100,10 @@ const cellPipeline = device.createRenderPipeline({
         }]
     }
 });
-///////// INNER SQUARE SETUP
 
-
-///////// GRID SETUP
-let GRID_SIZE = 32;
-
-let gridInput = document.getElementById("grid-size");
-let handleInput = (event) => {
-    console.log(event)
-    GRID_SIZE = event.target.value;
-};
-
-gridInput.addEventListener("input", handleInput);
 
 // Uniform buffer
+let GRID_SIZE = 32;
 const uniformArray = new Float32Array([GRID_SIZE, GRID_SIZE]);
 const uniformBuffer = device.createBuffer({
     label: "Grid Uniforms",
@@ -126,8 +111,6 @@ const uniformBuffer = device.createBuffer({
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 });
 device.queue.writeBuffer(uniformBuffer, 0, uniformArray);
-///////// GRID SETUP
-
 
 ///////// Cell Management SETUP
 const cellStateArray = new Uint32Array(GRID_SIZE * GRID_SIZE);
@@ -187,11 +170,18 @@ const bindGroups = [
     })
 ];
 
-const UPDATE_INTERVAL = 200;
 let step = 0;
+const UPDATE_INTERVAL = 200;
 
 function updateGrid() {
     step++;
+
+    let gridInput = document.getElementById("grid-size");
+    gridInput.value = GRID_SIZE;
+    let handleInput = (event) => {
+        GRID_SIZE = event.target.value;
+    };
+    gridInput.addEventListener("input", handleInput);
 
     const encoder = device.createCommandEncoder();
     const pass = encoder.beginRenderPass({
@@ -213,5 +203,4 @@ function updateGrid() {
 };
 
 setInterval(updateGrid, UPDATE_INTERVAL);
-//updateGrid();
 

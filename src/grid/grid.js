@@ -1,4 +1,3 @@
-///////// GENERAL SETUP
 const canvas = document.getElementById("grid");
 if (!navigator.gpu) {
     throw new Error("WebGPU not supported on this browser.");
@@ -15,21 +14,6 @@ context.configure({
     device: device,
     format: canvasFormat,
 });
-///////// GENERAL SETUP
-
-///////// SETUP INTERFACE TO RECORD GPU COMMANDS
-const encoder = device.createCommandEncoder();
-
-// Render passes are when all drawing operations in WebGPU happen
-const pass = encoder.beginRenderPass({
-    colorAttachments: [{
-        view: context.getCurrentTexture().createView(),
-        loadOp: "clear", // load or clear 
-        clearValue: { r: 1, g: 1, b: 1, a: 1 }, // ignored if loadOp isn't clear
-        storeOp: "store", // store or discard
-    }]
-});
-///////// SETUP INTERFACE TO RECORD GPU COMMANDS
 
 ///////// WGSL
 const cellShaderModule = device.createShaderModule({
@@ -70,7 +54,6 @@ const cellShaderModule = device.createShaderModule({
 });
 ///////// WGSL
 
-///////// INNER SQUARE SETUP
 const vertices = new Float32Array([
     -0.8, -0.8,
     0.8, -0.8,
@@ -114,11 +97,6 @@ const cellPipeline = device.createRenderPipeline({
     }
 });
 
-pass.setPipeline(cellPipeline);
-pass.setVertexBuffer(0, vertexBuffer);
-///////// INNER SQUARE SETUP
-
-
 let step = 0;
 let GRID_SIZE = 32;
 function updateGrid() {
@@ -129,10 +107,8 @@ function updateGrid() {
     let handleInput = (event) => {
         GRID_SIZE = event.target.value;
     };
-
     gridInput.addEventListener("input", handleInput);
 
-    // Uniform buffer
     const uniformArray = new Float32Array([GRID_SIZE, GRID_SIZE]);
     const uniformBuffer = device.createBuffer({
         label: "Grid Uniforms",

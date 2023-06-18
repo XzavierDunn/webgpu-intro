@@ -1,4 +1,3 @@
-///////// GENERAL SETUP
 const canvas = document.getElementById("intro");
 if (!navigator.gpu) {
     throw new Error("WebGPU not supported on this browser.");
@@ -17,7 +16,6 @@ context.configure({
     device: device,
     format: canvasFormat,
 });
-///////// GENERAL SETUP
 
 ///////// SETUP INTERFACE TO RECORD GPU COMMANDS
 const encoder = device.createCommandEncoder();
@@ -31,9 +29,7 @@ const pass = encoder.beginRenderPass({
         storeOp: "store", // store or discard
     }]
 });
-///////// SETUP INTERFACE TO RECORD GPU COMMANDS
 
-///////// INNER SQUARE SETUP
 const vertices = new Float32Array([
 //    -1, 1,
 //    0, 1,
@@ -120,10 +116,7 @@ const cellPipeline = device.createRenderPipeline({
 pass.setPipeline(cellPipeline);
 pass.setVertexBuffer(0, vertexBuffer);
 pass.draw(vertices.length / 2);
-///////// INNER SQUARE SETUP
 
-///////// Send Commands
-// end render pass
 pass.end();
 
 // Submit command buffer to GPU
